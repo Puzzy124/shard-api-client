@@ -33,9 +33,21 @@ async def test_image():
     print(response.image)
     print(response.generation_time)
     print(response.warning)
+    response = await client.image_async.turbo_completions(prompt)
+    print(response.image)
+    print(response.generation_time)
+    print(response.warning)
+    response = await client.image_async.sdxl_completions(prompt)
+    print(response.image)
+    print(response.generation_time)
+    print(response.warning)
+    await response.download_async("image.png")
+    byte_response = await response.as_bytes_async()
+    print(byte_response)
 
 
 async def test_image_models():
+    print(await client.image_async.sdxl_options())
     print(await client.image_async.options())
 
 

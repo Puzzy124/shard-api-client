@@ -28,7 +28,11 @@ options = client.image.options()
 # Get the response from the image generation model
 response = client.image.completions("A picture of a cat")
 
-print(response.image) # This will be an image as https://shard-ai.xyz/static/...
+print(response.image) # This will be an image as https://shard-ai.xyz/static/....png
+
+response.image.download("cat.png") # This will download the image to the current directory
+
+image_bytes = response.image.as_bytes() # This will return the image as bytes
 
 # Get all the available tts voices
 voices = client.tts.voices()
