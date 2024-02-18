@@ -17,8 +17,10 @@ class ImageAsync:
         model: str = "DREAMSHAPER_8",
         cfg: int = 4,
         steps: int = 15,
+        style: str = "enhance",
         negative_prompt: str = None,
         seed: int = randint(0, 10000000000),
+        base64: bool = False,
     ):
         """
         Image generation function
@@ -37,6 +39,8 @@ class ImageAsync:
             "steps": steps,
             "negative_prompt": negative_prompt,
             "seed": seed,
+            "style": style,
+            "base64": base64,
         }
         async with ClientSession() as session:
             async with session.post(
@@ -50,7 +54,8 @@ class ImageAsync:
                 return ImageResponse(
                     json_response["image"],
                     json_response["generation-time"],
-                    json_response["Warning!"],
+                    json_response["warning!"],
+                    json_response["info"]["model"],
                 )
 
     async def options(self):
@@ -77,8 +82,11 @@ class ImageAsync:
         model: str = "dreamshaperXL10_alpha2.safetensors [c8afe2ef]",
         cfg: int = 4,
         steps: int = 15,
+        style: str = "enhance",
         negative_prompt: str = None,
         seed: int = randint(0, 10000000000),
+        upscale: bool = False,
+        base64: bool = False,
     ):
         """
         SDXL Image generation function
@@ -97,6 +105,9 @@ class ImageAsync:
             "steps": steps,
             "negative_prompt": negative_prompt,
             "seed": seed,
+            "style": "enhance",
+            "upscale": upscale,
+            "base64": base64,
         }
         async with ClientSession() as session:
             async with session.post(
@@ -135,6 +146,8 @@ class ImageAsync:
         self,
         prompt: str = None,
         negative_prompt: str = None,
+        style: str = "enhance",
+        base64: bool = False,
     ):
         """
         Image generation function for the turbo endpoint
@@ -147,6 +160,8 @@ class ImageAsync:
         payload = {
             "prompt": prompt,
             "negative_prompt": negative_prompt,
+            "style": style,
+            "base64": base64,
         }
         async with ClientSession() as session:
             async with session.post(

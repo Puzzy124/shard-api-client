@@ -43,7 +43,7 @@ async def test_image():
     print(response.warning)
     await response.download_async("image.png")
     byte_response = await response.as_bytes_async()
-    print(byte_response)
+    print(byte_response[:10])
 
 
 async def test_image_models():

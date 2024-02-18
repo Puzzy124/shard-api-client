@@ -26,7 +26,11 @@ class TTSAsync:
                 json_response = await response.json()
                 if response.status != 200:
                     raise APIError(f"Error: {response.status}")
-                return TTSResponse(json_response["audio"])
+                return TTSResponse(
+                    json_response["audio"],
+                    json_response["generation-time"],
+                    json_response["warning!"],
+                )
 
     async def voices(self):
         """

@@ -1,10 +1,62 @@
 from requests import get
 from aiohttp import ClientSession
+from base64 import b64encode
 
 
 class TTSResponse:
-    def __init__(self, audio: str):
+
+    def __init__(self, audio: str, generation_time: float, warning: str):
         self.audio = audio
+        self.generation_time = generation_time
+        self.warning = warning
+
+    def download(self, path: str):
+        """
+        Download the audio to a file
+        """
+        if "https://" not in self.audio:
+            self.audio = b64encode(self.audio.replace("data:audio/mp3;base64,", ""))
+            with open(path, "wb") as file:
+                file.write(self.audio)
+        else:
+            response = get(self.audio)
+            with open(path, "wb") as file:
+                file.write(response.content)
+
+    async def download_async(self, path: str):
+        """
+        Download the audio to a file asynchronously
+        """
+        if "https://" not in self.audio:
+            self.audio = b64encode(self.audio.replace("data:audio/mp3;base64,", ""))
+            with open(path, "wb") as file:
+                file.write(self.audio)
+        else:
+            async with ClientSession() as session:
+                async with session.get(self.audio) as response:
+                    with open(path, "wb") as file:
+                        file.write(await response.read())
+
+    def as_bytes(self):
+        """
+        Return the audio as bytes
+        """
+        if "https://" not in self.audio:
+            return b64encode(self.audio.replace("data:audio/mp3;base64,", ""))
+        else:
+            response = get(self.audio)
+            return response.content
+
+    async def as_bytes_async(self):
+        """
+        Return the audio as bytes asynchronously
+        """
+        if "https://" not in self.audio:
+            return b64encode(self.audio.replace("data:audio/mp3;base64,", ""))
+        else:
+            async with ClientSession() as session:
+                async with session.get(self.audio) as response:
+                    return await response.read()
 
     def __repr__(self):
         return f"<TTSResponse audio={self.audio[:10]}>"
@@ -78,6 +130,7 @@ class ChatMessage:
 
 
 class ImageResponse:
+
     def __init__(
         self, image: str, generation_time: float, warning: str, info: str = None
     ):
@@ -90,33 +143,49 @@ class ImageResponse:
         """
         Download the image to a file
         """
-        response = get(self.image)
-        with open(path, "wb") as file:
-            file.write(response.content)
+        if "https://" not in self.image:
+            self.image = b64encode(self.image.replace("data:image/png;base64,", ""))
+            with open(path, "wb") as file:
+                file.write(self.image)
+        else:
+            response = get(self.image)
+            with open(path, "wb") as file:
+                file.write(response.content)
 
     async def download_async(self, path: str):
         """
         Download the image to a file asynchronously
         """
-        async with ClientSession() as session:
-            async with session.get(self.image) as response:
-                with open(path, "wb") as file:
-                    file.write(await response.read())
+        if "https://" not in self.image:
+            self.image = b64encode(self.image.replace("data:image/png;base64,", ""))
+            with open(path, "wb") as file:
+                file.write(self.image)
+        else:
+            async with ClientSession() as session:
+                async with session.get(self.image) as response:
+                    with open(path, "wb") as file:
+                        file.write(await response.read())
 
     def as_bytes(self):
         """
         Return the image as bytes
         """
-        response = get(self.image)
-        return response.content
+        if "https://" not in self.image:
+            return b64encode(self.image.replace("data:image/png;base64,", ""))
+        else:
+            response = get(self.image)
+            return response.content
 
     async def as_bytes_async(self):
         """
         Return the image as bytes asynchronously
         """
-        async with ClientSession() as session:
-            async with session.get(self.image) as response:
-                return await response.read()
+        if "https://" not in self.image:
+            return b64encode(self.image.replace("data:image/png;base64,", ""))
+        else:
+            async with ClientSession() as session:
+                async with session.get(self.image) as response:
+                    return await response.read()
 
     def __repr__(self):
         return f"<ImageResponse image={self.image[:10]}>"
