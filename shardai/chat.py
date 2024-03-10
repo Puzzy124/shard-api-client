@@ -1,16 +1,24 @@
-from requests import get
 from aiohttp import ClientSession
-from .objects import ChatResponse
+from requests import get
+
 from .exceptions import *
+from .objects import ChatResponse
 
 
 class ChatAsync:
     def __init__(self, api_key: str):
         self.api_key = api_key
 
-    async def completions(self, prompt: str, model: str):
+    async def completions(
+        self, model: str, messages: list = None, prompt: str = None
+    ) -> ChatResponse:
         """
         Chat function
+
+        :param prompt: The prompt to use for the chat
+        :param model: The model to use for the chat
+
+        :return: The response of the chat
         """
         if self.api_key is None:
             raise NoAPIKeyError("API key is required for this function")
@@ -18,7 +26,11 @@ class ChatAsync:
             raise NoInputError("Prompt is required for this function")
 
         headers = {"api-key": self.api_key, "Content-Type": "application/json"}
-        payload = {"messages": [{"role": "user", "content": prompt}], "model": model}
+        payload = (
+            {"messages": [{"role": "user", "content": prompt}], "model": model}
+            if messages is None
+            else {"messages": messages, "model": model}
+        )
         async with ClientSession() as session:
             async with session.post(
                 "https://shard-ai.xyz/v1/chat/completions",
@@ -37,9 +49,11 @@ class ChatAsync:
                     json_response["choices"],
                 )
 
-    async def models(self):
+    async def models(self) -> list:
         """
         Get available models
+
+        :return: The available models
         """
         async with ClientSession() as session:
             async with session.get("https://shard-ai.xyz/v1/chat/models") as response:
@@ -53,16 +67,27 @@ class Chat:
     def __init__(self, api_key: str):
         self.api_key = api_key
 
-    def completions(self, prompt: str, model: str):
+    def completions(
+        self, model: str, messages: list = None, prompt: str = None
+    ) -> ChatResponse:
         """
         Chat function
+
+        :param prompt: The prompt to use for the chat
+        :param model: The model to use for the chat
+
+        :return: The response of the chat
         """
         if self.api_key is None:
             raise NoAPIKeyError("API key is required for this function")
         if prompt is None:
             raise NoInputError("Prompt is required for this function")
         headers = {"api-key": self.api_key, "Content-Type": "application/json"}
-        payload = {"messages": [{"role": "user", "content": prompt}], "model": model}
+        payload = (
+            {"messages": [{"role": "user", "content": prompt}], "model": model}
+            if messages is None
+            else {"messages": messages, "model": model}
+        )
         response = get(
             "https://shard-ai.xyz/v1/chat/completions", json=payload, headers=headers
         )
@@ -78,9 +103,11 @@ class Chat:
             response_json["choices"],
         )
 
-    def models(self):
+    def models(self) -> list:
         """
         Get available models
+
+        :return: The available models
         """
         response = get("https://shard-ai.xyz/v1/chat/models")
         if response.status_code != 200:

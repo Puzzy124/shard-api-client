@@ -1,8 +1,10 @@
-from .objects import ImageResponse, ImageOptions
-from requests import get
-from aiohttp import ClientSession
 from random import randint
+
+from aiohttp import ClientSession
+from requests import get
+
 from .exceptions import *
+from .objects import ImageOptions, ImageResponse
 
 
 class ImageAsync:
@@ -21,9 +23,22 @@ class ImageAsync:
         negative_prompt: str = None,
         seed: int = randint(0, 10000000000),
         base64: bool = False,
-    ):
+    ) -> ImageResponse:
         """
         Image generation function
+
+        :param prompt: The prompt for the image
+        :param sampler: The sampler to use for the image
+        :param ratio: The ratio to use for the image
+        :param model: The model to use for the image
+        :param cfg: The cfg to use for the image
+        :param steps: The steps to use for the image
+        :param style: The style to use for the image
+        :param negative_prompt: The negative prompt to use for the image
+        :param seed: The seed to use for the image
+        :param base64: Whether to return the image as base64
+
+        :return: The image response
         """
         if self.api_key is None:
             raise NoAPIKeyError("API key is required for this function")
@@ -58,9 +73,11 @@ class ImageAsync:
                     json_response["info"]["model"],
                 )
 
-    async def options(self):
+    async def options(self) -> ImageOptions:
         """
         Get available options
+
+        :return: The image options
         """
         async with ClientSession() as session:
             async with session.get("https://shard-ai.xyz/v1/sd1x/models") as response:
@@ -87,9 +104,23 @@ class ImageAsync:
         seed: int = randint(0, 10000000000),
         upscale: bool = False,
         base64: bool = False,
-    ):
+    ) -> ImageResponse:
         """
         SDXL Image generation function
+
+        :param prompt: The prompt for the image
+        :param sampler: The sampler to use for the image
+        :param ratio: The ratio to use for the image
+        :param model: The model to use for the image
+        :param cfg: The cfg to use for the image
+        :param steps: The steps to use for the image
+        :param style: The style to use for the image
+        :param negative_prompt: The negative prompt to use for the image
+        :param seed: The seed to use for the image
+        :param upscale: Whether to upscale the image
+        :param base64: Whether to return the image as base64
+
+        :return: The image response
         """
         if self.api_key is None:
             raise NoAPIKeyError("API key is required for this function")
@@ -125,9 +156,11 @@ class ImageAsync:
                     json_response["info"]["model"],
                 )
 
-    async def sdxl_options(self):
+    async def sdxl_options(self) -> ImageOptions:
         """
         Get available options for SDXL
+
+        :return: The image options
         """
         async with ClientSession() as session:
             async with session.get("https://shard-ai.xyz/v1/sdxl/models") as response:
@@ -148,9 +181,16 @@ class ImageAsync:
         negative_prompt: str = None,
         style: str = "enhance",
         base64: bool = False,
-    ):
+    ) -> ImageResponse:
         """
         Image generation function for the turbo endpoint
+
+        :param prompt: The prompt for the image
+        :param negative_prompt: The negative prompt for the image
+        :param style: The style to use for the image
+        :param base64: Whether to return the image as base64
+
+        :return: The image response
         """
         if self.api_key is None:
             raise NoAPIKeyError("API key is required for this function")
@@ -194,9 +234,20 @@ class Image:
         steps: int = 15,
         negative_prompt: str = None,
         seed: int = randint(0, 10000000000),
-    ):
+    ) -> ImageResponse:
         """
         Image generation function
+
+        :param prompt: The prompt for the image
+        :param sampler: The sampler to use for the image
+        :param ratio: The ratio to use for the image
+        :param model: The model to use for the image
+        :param cfg: The cfg to use for the image
+        :param steps: The steps to use for the image
+        :param negative_prompt: The negative prompt to use for the image
+        :param seed: The seed to use for the image
+
+        :return: The image response
         """
         if self.api_key is None:
             raise NoAPIKeyError("API key is required for this function")
@@ -235,9 +286,20 @@ class Image:
         steps: int = 15,
         negative_prompt: str = None,
         seed: int = randint(0, 10000000000),
-    ):
+    ) -> ImageResponse:
         """
         SDXL Image generation function
+
+        :param prompt: The prompt for the image
+        :param sampler: The sampler to use for the image
+        :param ratio: The ratio to use for the image
+        :param model: The model to use for the image
+        :param cfg: The cfg to use for the image
+        :param steps: The steps to use for the image
+        :param negative_prompt: The negative prompt to use for the image
+        :param seed: The seed to use for the image
+
+        :return: The image response
         """
         if self.api_key is None:
             raise NoAPIKeyError("API key is required for this function")
@@ -267,9 +329,11 @@ class Image:
             response_json["info"]["model"],
         )
 
-    def sdxl_options(self):
+    def sdxl_options(self) -> ImageOptions:
         """
         Get available options for SDXL
+
+        :return: The image options
         """
         response = get("https://shard-ai.xyz/v1/sdxl/models")
         if response.status_code != 200:
@@ -287,9 +351,14 @@ class Image:
         self,
         prompt: str = None,
         negative_prompt: str = None,
-    ):
+    ) -> ImageResponse:
         """
         Image generation function for the turbo endpoint
+
+        :param prompt: The prompt for the image
+        :param negative_prompt: The negative prompt for the image
+
+        :return: The image response
         """
         if self.api_key is None:
             raise NoAPIKeyError("API key is required for this function")
@@ -315,9 +384,11 @@ class Image:
             response_json["info"]["model"],
         )
 
-    def options(self):
+    def options(self) -> ImageOptions:
         """
         Get available options
+
+        :return: The image options
         """
         response = get("https://shard-ai.xyz/v1/sd1x/models")
         if response.status_code != 200:

@@ -9,7 +9,7 @@ async def test_tts():
     prompt = "Hello, how are you?"
     voice = "Rachel"
 
-    response = await client.tts_async.completions(prompt, voice)
+    response = await client.tts_async.completions(prompt, voice=voice)
     print(response.audio)
 
 
@@ -20,7 +20,7 @@ async def test_tts_voices():
 async def test_chat():
     print(await client.chat_async.models())
     prompt = "Hello, how are you?"
-    response = await client.chat_async.completions(prompt, "llama_2_7b")
+    response = await client.chat_async.completions(prompt=prompt, model="llama_2_7b")
     print(response)
     print(response.choices)
     print(response.choices[0].message.content)
@@ -51,19 +51,24 @@ async def test_image_models():
     print(await client.image_async.options())
 
 
+async def test_moderation():
+    print(await client.moderation_async.completions("uwu"))
+
+
 async def test_all():
     await test_tts()
     await test_tts_voices()
     await test_chat()
     await test_image()
-    await test_image_models()
+    #await test_image_models()
+    await test_moderation()
 
 
 def main():
     import asyncio
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(test_all())
+    loop.run_until_complete(test_moderation())
 
 
 if __name__ == "__main__":

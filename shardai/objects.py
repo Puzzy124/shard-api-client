@@ -1,14 +1,19 @@
-from requests import get
-from aiohttp import ClientSession
 from base64 import b64encode
+
+from aiohttp import ClientSession
+from requests import get
 
 
 class TTSResponse:
 
-    def __init__(self, audio: str, generation_time: float, warning: str):
+    def __init__(self, audio: str, generation_time: float, warning: str, info: dict):
         self.audio = audio
         self.generation_time = generation_time
         self.warning = warning
+        self.model = info.get("model")
+        self.language = info.get("language")
+        self.gender = info.get("gender")
+        self.voice = info.get("voice_used")
 
     def download(self, path: str):
         """
@@ -65,21 +70,54 @@ class TTSResponse:
         return f"<TTSResponse audio={self.audio[:10]}>"
 
 
-class Voice:
-    def __init__(self, name: str, labels: dict, preview_url: str):
+class ElevenLabsVoice:
+    def __init__(self, name: str, accent: str, age: str, gender: str, use_case: str):
         self.name = name
-        self.age = labels.get("age")
-        self.accent = labels.get("accent")
-        self.description = labels.get("description")
-        self.gender = labels.get("gender")
-        self.use_case = labels.get("use_case")
-        self.preview_url = preview_url
+        self.accent = accent
+        self.age = age
+        self.gender = gender
+        self.use_case = use_case
 
     def __repr__(self):
-        return f"<Voice name={self.name}>"
+        return f"<ElevenLabsVoice name={self.name}>"
 
     def __str__(self):
-        return f"<Voice name={self.name}>"
+        return f"<ElevenLabsVoice name={self.name}>"
+
+
+class TikTokVoice:
+    def __init__(self, name: str):
+        self.name = name
+
+    def __repr__(self):
+        return f"<TikTokVoice name={self.name}>"
+
+    def __str__(self):
+        return f"<TikTokVoice name={self.name}>"
+
+
+class EdgeVoice:
+    def __init__(self, message: str, parameters: dict):
+        self.message = message
+        self.gender = parameters.get("gender")
+        self.language = parameters.get("language")
+
+    def __repr__(self):
+        return f"<EdgeVoice message={self.message[:10]}>"
+
+    def __str__(self):
+        return f"<EdgeVoice message={self.message[:10]}>"
+
+
+class GoogleVoice:
+    def __init__(self, message: str):
+        self.message = message
+
+    def __repr__(self):
+        return f"<GoogleVoice message={self.message[:10]}>"
+
+    def __str__(self):
+        return f"<GoogleVoice message={self.message[:10]}>"
 
 
 class ChatResponse:
@@ -219,3 +257,20 @@ class ImageOptions:
         return (
             f"<ImageOptions models=... ratios=... samplers=... upscale=...> styles=...>"
         )
+
+
+class ModerationResponse:
+
+    def __init__(self, score: str, languages: dict, data: dict):
+        self.score = score
+        self.language = languages.get("language")
+        self.detected_language = languages.get("detected_language")
+        self.prompt = data.get("prompt")
+        self.attribute = data.get("attribute")
+        self.time = data.get("time")
+
+    def __repr__(self):
+        return f"<ModerationResponse result={self.score}>"
+
+    def __str__(self):
+        return f"<ModerationResponse result={self.score}>"

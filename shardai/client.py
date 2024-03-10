@@ -1,6 +1,7 @@
-from .chat import ChatAsync, Chat
-from .image import ImageAsync, Image
-from .tts import TTSAsync, TTS
+from .chat import Chat, ChatAsync
+from .image import Image, ImageAsync
+from .moderation import Moderation, ModerationAsync
+from .tts import TTS, TTSAsync
 
 
 class ShardClient:
@@ -12,6 +13,8 @@ class ShardClient:
         self.image_async = ImageAsync(api_key)
         self.tts = TTS(api_key)
         self.tts_async = TTSAsync(api_key)
+        self.moderation = Moderation(api_key)
+        self.moderation_async = ModerationAsync(api_key)
 
     def __repr__(self):
         return f"<ShardClient api_key={self.api_key}>"
